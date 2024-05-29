@@ -3,7 +3,7 @@ def construct_url(car_types, manufacturers, years, prices):
     params = []
 
     if car_types:
-        car_type_param = f"&sogRechev={','.join(car_types)}"
+        car_type_param = f"&carFamilyType={','.join(car_types)}"
         params.append(car_type_param)
 
     if manufacturers:
@@ -15,10 +15,16 @@ def construct_url(car_types, manufacturers, years, prices):
         params.append(year_param)
 
     if prices:
-        # Remove commas from prices and format correctly
-        formatted_prices = [price.replace(',', '') for price in prices]
-        price_param = f"&price={formatted_prices[0]}-{formatted_prices[1]}"
+        price_param = f"&price={prices[0]}-{prices[1]}"
         params.append(price_param)
 
-    # Construct the final URL
-    return base_url + "?" + "&".join(params).strip("&")
+    return base_url + "?" + "&".join(params)
+
+
+if __name__ == "__main__":
+    car_types = ["2"]
+    manufacturers = ["2", "102", "290"]
+    years = []
+    prices = ["-1", "200000"]
+    url = construct_url(car_types, manufacturers, years, prices)
+    print(url)

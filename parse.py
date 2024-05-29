@@ -1,52 +1,57 @@
-import spacy_stanza
+import spacy
 from spacy.matcher import Matcher
+from googletrans import Translator
+import spacy_stanza
+from mappings import CAR_TYPES_MAPPING, MANUFACTURERS_MAPPING
 
-# Load the Hebrew model
-nlp = spacy_stanza.load_pipeline("he") # Use the Stanza library for Hebrew NLP.
-# stanza is a Python NLP library for many languages.
+# Load the Hebrew model (optional, if needed for initial processing)
+nlp_he = spacy_stanza.load_pipeline("he")
 
-# Define car types and manufacturers for rule-based matching
-CAR_TYPES = ["קרוסאוברים", "משפחתיים", "יוקרה", "ג'יפים", "קטנים", "מיניוואנים",
-             "מנהלים", "ספורט", "טנדרים", "מסחריים"]
+# Load the English model
+nlp_en = spacy.load("en_core_web_sm")
 
-MANUFACTURERS = [
-    "BAWBAW", "EVEASYEVEASY", "KTMKTM", "XPENGXPENG", "ZEEKRZEEKR",
-    "אאודי", "אבארט", "אוטוביאנקי", "אולדסמוביל", "אוסטין", "אופל",
-    "אורה / Ora", "איווייס", "איווקו", "אינפיניטי", "איסוזו",
-    "אל.אי.וי.סי / LEVC", "אל.טי.איי", "אלפא רומיאו", "אלפין / ALPINE",
-    "אם. ג'י. / MG", "אסטון מרטין", "אף. אי. דאבליו / FEW", "ב.מ.וו",
-    "בי.ווי.די / BYD", "ביואיק", "בנטלי", "ג'י.איי.סי/ GAC", "ג'י.אם.סי / GMC",
-    "ג'יאו / Geo", "ג'יאיוואן/ Jiayuan", "ג'יי.איי.סי / JAC", "ג'ילי - Geely",
-    "ג'יפ / Jeep", "ג'יפ תע''ר", "ג'נסיס", "גרייט וול", "דאצ'יה", "דודג'",
-    "דונגפנג", "די.אס / DS", "דייהו", "דייהטסו", "האמר", "הונגצ'י / HONGQI",
-    "הונדה", "הינו  HINO", "ווי / WEY", "וויה / VOYAH", "וולוו", "טאטא",
-    "טויוטה", "טסלה", "יגואר", "יונדאי", "לאדה", "לינק&קו / Lynk&Co",
-    "לינקולן", "ליפמוטור / leapmotor", "ליצ'י", "למבורגיני", "לנד רובר",
-    "לנצ'יה", "לקסוס", "מאזדה", "מאן", "מזראטי", "מיני", "מיצובישי",
-    "מקסוס", "מרצדס", "ניאו / NIO", "ניסאן", "ננג'ינג", "סאאב", "סאן ליוינג / Sun Living",
-    "סאנגיונג", "סאנשיין", "סובארו", "סוזוקי", "סיאט", "סיטרואן", "סמארט",
-    "סנטרו", "סקודה", "סקייוול", "סרס / SERES", "פולסטאר / POLESTAR", "פולקסווגן",
-    "פונטיאק", "פורד", "פורשה", "פורתינג / FORTHING", "פיאג'ו", "פיאט", "פיג'ו",
-    "פרארי", "צ'רי / Chery", "קאדילק", "קופרה", "קיה", "קרייזלר", "רובר", "רנו",
-    "שברולט"
+# Initialize the translator
+translator = Translator()
+
+# Define car types and manufacturers for rule-based matching in English
+CAR_TYPES_EN = ["crossover", "family", "luxury", "jeep", "small", "minivan",
+                "executive", "sport", "pickup", "commercial"]
+
+MANUFACTURERS_EN = [
+    "audi", "abarth", "autobianchi", "oldsmobile", "austin", "opel",
+    "ora", "aiways", "iveco", "infiniti", "isuzu", "levc", "ltai",
+    "alfa romeo", "alpine", "mg", "aston martin", "few", "bmw", "byd",
+    "buick", "bentley", "gac", "gmc", "geo", "jiayuan", "jac", "geely",
+    "jeep", "genesis", "great wall", "dacia", "dodge", "dongfeng", "ds",
+    "daewoo", "daihatsu", "hummer", "hongqi", "honda", "hino", "wey",
+    "voyah", "volvo", "tata", "toyota", "tesla", "jaguar", "hyundai",
+    "lada", "lynk & co", "lincoln", "leapmotor", "lixi", "lamborghini",
+    "land rover", "lancia", "lexus", "mazda", "man", "maserati", "mini",
+    "mitsubishi", "maxus", "mercedes", "nio", "nissan", "nanjing", "saab",
+    "sun living", "ssangyong", "sunshine", "subaru", "suzuki", "seat",
+    "citroen", "smart", "centro", "skoda", "skywell", "seres", "polestar",
+    "volkswagen", "pontiac", "ford", "porsche", "forthing", "piaggio",
+    "fiat", "peugeot", "ferrari", "chery", "cadillac", "cupra", "kia",
+    "chrysler", "rover", "renault", "chevrolet"
 ]
 
 # Initialize the matcher
-matcher = Matcher(nlp.vocab)
+matcher = Matcher(nlp_en.vocab)
 
 # Add rules for car types
-
-# car_type_patterns = [[{"LOWER": car_type.lower()}] for car_type in CAR_TYPES]
+car_type_patterns = [[{"LOWER": car_type.lower()}] for car_type in CAR_TYPES_EN]
 matcher.add("CAR_TYPE", car_type_patterns)
 
 # Add rules for manufacturers
-manufacturer_patterns = [[{"LOWER": manufacturer.lower()}] for manufacturer in MANUFACTURERS]
+manufacturer_patterns = [[{"LOWER": manufacturer.lower()}] for manufacturer in MANUFACTURERS_EN]
 matcher.add("MANUFACTURER", manufacturer_patterns)
 
 
 # Function to parse text and extract relevant information
 def parse_text(input_text):
-    doc = nlp(input_text)
+    # Translate the input text to English
+    translated_text = translator.translate(input_text, src='he', dest='en').text
+    doc = nlp_en(translated_text)
     matches = matcher(doc)
 
     car_types = []
@@ -56,11 +61,11 @@ def parse_text(input_text):
 
     for match_id, start, end in matches:
         span = doc[start:end]
-        rule_id = nlp.vocab.strings[match_id]
+        rule_id = nlp_en.vocab.strings[match_id]
         if rule_id == "CAR_TYPE":
-            car_types.append(span.text)
+            car_types.append(CAR_TYPES_MAPPING[span.text.lower()])
         elif rule_id == "MANUFACTURER" and len(manufacturers) < 4:
-            manufacturers.append(span.text)
+            manufacturers.append(MANUFACTURERS_MAPPING[span.text.lower()])
 
     price_from = None
     price_to = None
@@ -71,9 +76,9 @@ def parse_text(input_text):
             if 1900 <= numeric_value <= 2100:
                 years.append(token.text)
             else:
-                if token.nbor(-1).text == "מ":
+                if token.nbor(-1).text == "from":
                     price_from = numeric_value
-                elif token.nbor(-1).text == "עד":
+                elif token.nbor(-1).text == "to":
                     price_to = numeric_value
                 elif not price_from and not price_to:
                     price_to = numeric_value
@@ -85,3 +90,11 @@ def parse_text(input_text):
 
     return car_types, manufacturers, years, prices
 
+
+if __name__ == "__main__":
+    input_text = "מחפש רכבים משפחתיים עד 200000 שקל"
+    car_types, manufacturers, years, prices = parse_text(input_text)
+    print("Car Types:", car_types)
+    print("Manufacturers:", manufacturers)
+    print("Years:", years)
+    print("Prices:", prices)
