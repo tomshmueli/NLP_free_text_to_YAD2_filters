@@ -14,6 +14,9 @@ STOP_WORDS = {"decade", "price", "year", "month", "me", "NIS", "shekel"}
 
 
 def handle_prices_range(prices, text):
+    """"
+    Adjust the prices range based on the context of the input text
+    """
     upper_bound = ["most", "up to", "less than", "maximum", "no more than", "under", "below"]
     lower_bound = ["least", "more than", "minimum", "no less than", "over", "above"]
 
@@ -29,6 +32,12 @@ def handle_prices_range(prices, text):
 
 
 def handle_years_range(years, text):
+    """
+    Adjust the years range based on the context of the input text
+    :param years:
+    :param text:
+    :return:
+    """
     current_year = datetime.now().year
     upper_bound = ["until", "to", "before", "by", "up to", "less than", "maximum", "no more than", "under", "below"]
     lower_bound = ["since", "from", "after", "starting from", "at least",
@@ -44,12 +53,25 @@ def handle_years_range(years, text):
 
 
 def length_adjusted_ratio(query, choice):
+    """
+    Calculate a score for the similarity between the query and choice strings based on length and partial ratio
+    :param query:
+    :param choice:
+    :return:
+    """
     partial_score = fuzz.partial_ratio(query, choice)
     length_score = min(len(query), len(choice)) / max(len(query), len(choice)) * 100
     return (partial_score + length_score) / 2
 
 
 def get_closest_match(query, choices, threshold=80):
+    """
+    Get the closest match to the query from a list of choices using fuzzy matching
+    :param query:
+    :param choices:
+    :param threshold:
+    :return:
+    """
     match, score = process.extractOne(query, choices, scorer=length_adjusted_ratio)
     return match if score >= threshold else None
 
@@ -76,7 +98,7 @@ def parse_text(text):
                 years.append(current_year)
                 continue
             # Extract individual years from date entities
-            range_match = re.search(r'(\d{4})\s*-\s*(\d{2,4})', ent.text)
+            range_match = re.search(r'(\d{4})\s*-\s*(\d{2,4})', ent.text)  # match year ranges
             if range_match:
                 start_year = range_match.group(1)
                 end_year = range_match.group(2)
