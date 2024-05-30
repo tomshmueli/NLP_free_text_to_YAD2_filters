@@ -1,6 +1,4 @@
-beautifulsoup4==4.10.0
-requests==2.26.0
-spacy==3.2.0
-spacy-stanza==1.0.0
-googletrans==4.0.0-rc1
-spellchecker~=0.4
+googletrans~=4.0.0rc1
+spacy~=3.2.0
+numerizer~=0.2.3
+fuzzywuzzy~=0.18.0
