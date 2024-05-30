@@ -14,10 +14,14 @@ def construct_url(car_types, manufacturers, years, prices):
         filters.append(f"manufacturer={','.join(map(str, manufacturer_ids))}")
 
     if years:
+        unique_years = set(years)
+        years = list(unique_years)
         years.sort()
         filters.append(f"year={years[0]}-{years[-1]}")
 
     if prices:
+        unique_prices = set(prices)
+        prices = list(unique_prices)
         prices.sort(key=int)
         filters.append(f"price={prices[0]}-{prices[-1]}")
 
