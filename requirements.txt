@@ -3,3 +3,4 @@ requests==2.26.0
 spacy==3.2.0
 spacy-stanza==1.0.0
 googletrans==4.0.0-rc1
+spellchecker~=0.4

@@ -1,4 +1,3 @@
-from extract_map import extract_manufacturers_mapping
 # Define car types and manufacturers for rule-based matching in English
 CAR_TYPES_EN = ["crossover", "family", "luxury", "jeep", "small", "minivan",
                 "executive", "sport", "pickup", "commercial"]

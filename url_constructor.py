@@ -1,30 +1,24 @@
+from mapping import CAR_TYPES_MAPPING, MANUFACTURERS_MAPPING
+
+
 def construct_url(car_types, manufacturers, years, prices):
-    base_url = "https://www.yad2.co.il/vehicles/cars"
-    params = []
+    base_url = "https://www.yad2.co.il/vehicles/cars?"
+    filters = []
 
     if car_types:
-        car_type_param = f"&carFamilyType={','.join(car_types)}"
-        params.append(car_type_param)
+        car_type_ids = [CAR_TYPES_MAPPING[car_type] for car_type in car_types]
+        filters.append(f"carFamilyType={','.join(map(str, car_type_ids))}")
 
     if manufacturers:
-        manufacturer_param = f"&manufacturer={','.join(manufacturers)}"
-        params.append(manufacturer_param)
+        manufacturer_ids = [MANUFACTURERS_MAPPING[manufacturer] for manufacturer in manufacturers]
+        filters.append(f"manufacturer={','.join(map(str, manufacturer_ids))}")
 
     if years:
-        year_param = f"&year={years[0]}-{years[1]}"
-        params.append(year_param)
+        years.sort()
+        filters.append(f"year={years[0]}-{years[-1]}")
 
     if prices:
-        price_param = f"&price={prices[0]}-{prices[1]}"
-        params.append(price_param)
+        prices.sort(key=int)
+        filters.append(f"price={prices[0]}-{prices[-1]}")
 
-    return base_url + "?" + "&".join(params)
-
-
-if __name__ == "__main__":
-    car_types = ["2"]
-    manufacturers = ["2", "102", "290"]
-    years = []
-    prices = ["-1", "200000"]
-    url = construct_url(car_types, manufacturers, years, prices)
-    print(url)
+    return base_url + "&".join(filters)

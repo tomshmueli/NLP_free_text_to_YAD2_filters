@@ -1,12 +1,21 @@
 from parse import parse_text
 from url_constructor import construct_url
+from googletrans import Translator
 
-def generate_search_url(input_text):
-    car_types, manufacturers, years, prices = parse_text(input_text)
-    search_url = construct_url(car_types, manufacturers, years, prices)
-    return search_url
+
+def translate_to_english(text):
+    translator = Translator()
+    translation = translator.translate(text, src='he', dest='en')
+    return translation.text
+
+
+def main():
+    user_input = input("Enter your search query: ")
+    translated_text = translate_to_english(user_input)
+    car_types, manufacturers, years, prices = parse_text(translated_text)
+    url = construct_url(car_types, manufacturers, years, prices)
+    print("Constructed URL:", url)
+
 
 if __name__ == "__main__":
-    input_text = input("Enter your search criteria: ")
-    search_url = generate_search_url(input_text)
-    print("Generated Search URL:", search_url)
+    main()
