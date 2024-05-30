@@ -14,8 +14,8 @@ STOP_WORDS = {"decade", "price", "year", "month", "me", "NIS", "shekel"}
 
 
 def handle_prices_range(prices, text):
-    upper_bound = ["at most", "up to", "less than", "maximum", "no more than", "under", "below"]
-    lower_bound = ["at least", "more than", "minimum", "no less than", "over", "above"]
+    upper_bound = ["most", "up to", "less than", "maximum", "no more than", "under", "below"]
+    lower_bound = ["least", "more than", "minimum", "no less than", "over", "above"]
 
     if len(prices) == 1:
         context = text.lower()
@@ -36,9 +36,9 @@ def handle_years_range(years, text):
     if len(years) == 1:
         context = text.lower()
         if any(phrase in context for phrase in upper_bound):
-            years = [years[0], str(current_year)]
+            years = [str(1971), max(years)]  # 1971 is the first year in the dataset of Yad2
         elif any(phrase in context for phrase in lower_bound):
-            years = [min(years), max(years)]
+            years = [max(years), str(current_year)]
 
     return years
 
