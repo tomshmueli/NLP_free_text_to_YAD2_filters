@@ -12,9 +12,6 @@ This project provides a solution for parsing free-text input in Hebrew to extrac
 - [License](#license)
 
 ## Project Structure
-```
-Explain your project structure here. Example:
-```
 - `main.py` : The main script to run the application.
 - `parser.py` : Contains functions to parse the free-text input.
 - `url_generator.py` : Generates the URL based on extracted parameters.
@@ -46,17 +43,12 @@ To run this project, you need to have Python 3.9 and the necessary libraries ins
 
 To use the application, follow these steps:
 
-1. Add your OpenAI API key securely:
-   ```sh
-   export OPENAI_API_KEY='your-api-key'
-   ```
-
-2. Run the main script:
+1. Run the main script:
    ```sh
    python main.py
    ```
 
-3. Input your free-text search query in Hebrew, and the application will generate the relevant URL for car searches on Yad2.
+2. Input your free-text search query in Hebrew, and the application will generate the relevant URL for car searches on Yad2.
 
 ## Features
 
@@ -64,11 +56,4 @@ To use the application, follow these steps:
 - Generates URLs with filters for the Yad2 car search.
 - Handles various car manufacturers and allows the user to choose up to 4 manufacturers.
 
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
